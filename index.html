@@ -195,7 +195,7 @@
             // ตรวจสอบความยาว 8 ตัวอักษรและขึ้นต้นด้วย 5 หรือ 7
             if (phoneInput.length === 8 && (phoneInput.startsWith('5') || phoneInput.startsWith('7'))) {
                 errorMessage.style.display = 'none';
-                alert('OTP requested for 020' + phoneInput + '. Redirecting to OTP screen (Page 2)...');
+                alert('OTP requested for 020' + phoneInput + '. ລະຫັດກຳລັງສົ່ງຫາທ່ານ');
                 // *** ในระบบจริง: ใช้ window.location.href เพื่อนำไปหน้า 2 ***
                 window.location.href = 'otp_verification.html'; 
             } else {
