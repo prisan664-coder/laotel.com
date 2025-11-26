@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="lo">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>กรอกข้อมูลลงทะเบียน - ONEGRAB</title>
+    <style>
+        /* (CSS Styles from previous pages) */
+        body {
+            font-family: 'Noto Sans Lao', sans-serif;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+
+        .header-title {
+            color: #cc0000;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .progress-step {
+            flex-grow: 1;
+            text-align: center;
+            color: #aaa;
+            padding: 5px;
+            border-bottom: 3px solid #eee;
+            font-size: 0.9em;
+        }
+
+        .progress-step.active {
+            color: #cc0000;
+            border-color: #cc0000;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        .gender-select {
+            display: flex;
+            gap: 10px;
+        }
+
+        .gender-select input {
+            display: none;
+        }
+
+        .gender-select label {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .gender-select input:checked+label {
+            background-color: #cc0000;
+            color: white;
+            border-color: #cc0000;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-save {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-back {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header-title" data-lang-key="reg_form_title">ຂຶ້ນທະບຽນເບີ: 020xxxxxxx</div>
+
+        <div class="progress-bar">
+            <div class="progress-step" data-lang-key="step1">1. ກວດສອບເບີ</div>
+            <div class="progress-step" data-lang-key="step2">2. ຖ່າຍຮູບ</div>
+            <div class="progress-step active" data-lang-key="step3">3. ປະຫວັດຂໍ້ມູນ</div>
+        </div>
+
+        <form id="registrationForm">
+            <div class="form-group">
+                <label data-lang-key="gender_label">ເພດ</label>
+                <div class="gender-select">
+                    <input type="radio" id="female" name="gender" value="ຍິງ" required>
+                    <label for="female" data-lang-key="female">ຍິງ</label>
+                    <input type="radio" id="male" name="gender" value="ຊາຍ">
+                    <label for="male" data-lang-key="male">ຊາຍ</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="docType" data-lang-key="doc_type_label">ເລືອກເອກະສານ</label>
+                <select id="docType" name="docType" required>
+                    <option value="" disabled selected data-lang-key="select_doc_placeholder">ເລືອກເອກະສານ</option>
+                    <option value="ID_CARD">ບັດປະຈຳຕົວ</option>
+                    <option value="FOREIGN_ID">ບັດປະຈຳຕົວຕ່າງດ້າວຖາວອນ</option>
+                    <option value="MONK_ID">ບັດປະຈຳຕົວ ພະສົງ</option>
+                    <option value="PASSPORT">Passport</option>
+                    <option value="HOUSEHOLD">ສຳມະໂນຄົວ</option>
+                    <option value="FOREIGN_HOUSEHOLD">ສຳມະໂນຄົວ ຕ່າງດ້າວຖາວອນ</option>
+                    <option value="MONK_HOUSEHOLD">ສຳມະໂນຄົວ ພະສົງ</option>
+                    <option value="ADDRESS_CONFIRMATION">ໃບຢັງຢືນທີຢູ່</option>
+                    <option value="DRIVING_LICENSE">ໃບຂັບຂີ່</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="docNum" data-lang-key="doc_num_label">ເລກທີເອກະສານ</label>
+                <input type="text" id="docNum" name="docNum" required>
+            </div>
+            <div class="form-group">
+                <label for="firstName" data-lang-key="first_name_label">ຊື່ແທ້: ນ.</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName" data-lang-key="last_name_label">ນາມສະກຸມ</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+                <label for="dob" data-lang-key="dob_label">ວ.ດ.ປ ເກີດ</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="country" data-lang-key="country_label">ປະເທດ</label>
+                <input type="text" id="country" name="country" required>
+            </div>
+            <div class="form-group">
+                <label for="province" data-lang-key="province_label">ແຂວງ</label>
+                <input type="text" id="province" name="province" required>
+            </div>
+            <div class="form-group">
+                <label for="district" data-lang-key="district_label">ເມືອງ</label>
+                <input type="text" id="district" name="district" required>
+            </div>
+            <div class="form-group">
+                <label for="village" data-lang-key="village_label">ບ້ານ</label>
+                <input type="text" id="village" name="village" required>
+            </div>
+
+            <button type="submit" class="btn-action btn-save" data-lang-key="save_button">ກົດບັນທືກ</button>
+            <button type="button" class="btn-action btn-back" onclick="goToPage(4)"
+                data-lang-key="go_back">ຍ້ອນກັບ</button>
+        </form>
+    </div>
+
+    <script>
+        // *** Translations (รวมกับของหน้าก่อนหน้า) ***
+        const translations = {
+            lo: {
+                reg_form_title: 'ຂຶ້ນທະບຽນເບີ: 020xxxxxxx',
+                step1: '1. ກວດສອບເບີ',
+                step2: '2. ຖ່າຍຮູບ',
+                step3: '3. ປະຫວັດຂໍ້ມູນ',
+                gender_label: 'ເພດ',
+                female: 'ຍິງ',
+                male: 'ຊາຍ',
+                doc_type_label: 'ເລືອກເອກະສານ',
+                select_doc_placeholder: 'ເລືອກເອກະສານ',
+                doc_num_label: 'ເລກທີເອກະສານ',
+                first_name_label: 'ຊື່ແທ້: ນ.',
+                last_name_label: 'ນາມສະກຸມ',
+                dob_label: 'ວ.ດ.ປ ເກີດ',
+                country_label: 'ປະເທດ',
+                province_label: 'ແຂວງ',
+                district_label: 'ເມືອງ',
+                village_label: 'ບ້ານ',
+                save_button: 'ກົດບັນທືກ',
+                go_back: 'ຍ້ອນກັບ',
+                data_incomplete: 'ທ່ານໃສ່ຂໍ້ມູມບໍ່ຄົບ',
+                save_success: 'ບັນທຶກຂໍ້ມູນສຳເລັດແລ້ວ! ກັບໄປໜ້າປ້ອນເບີ.',
+                // เพิ่มข้อความสำหรับ Dropdown options
+            },
+            en: {
+                reg_form_title: 'SIM Registration: 020xxxxxxx',
+                step1: '1. Check Number',
+                step2: '2. Take Photo',
+                step3: '3. Personal Data',
+                gender_label: 'Gender',
+                female: 'Female',
+                male: 'Male',
+                doc_type_label: 'Select Document',
+                select_doc_placeholder: 'Select Document',
+                doc_num_label: 'Document ID',
+                first_name_label: 'First Name',
+                last_name_label: 'Last Name',
+                dob_label: 'Date of Birth',
+                country_label: 'Country',
+                province_label: 'Province',
+                district_label: 'District',
+                village_label: 'Village',
+                save_button: 'Save',
+                go_back: 'Go Back',
+                data_incomplete: 'You did not fill in all required information.',
+                save_success: 'Data saved successfully! Returning to phone number entry.',
+                // เพิ่มข้อความสำหรับ Dropdown options
+            }
+        };
+
+        // ฟังก์ชันสลับภาษา
+        function switchLanguage(lang) {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            document.documentElement.lang = lang;
+        }
+
+        // ฟังก์ชันตรวจสอบความสมบูรณ์ของฟอร์ม (Validation)
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // ป้องกันการส่งฟอร์มมาตรฐาน
+
+            const form = event.target;
+            const requiredFields = form.querySelectorAll('[required]');
+            let isComplete = true;
+            const lang = document.documentElement.lang;
+
+            requiredFields.forEach(field => {
+                if (field.type === 'radio') {
+                    // ตรวจสอบ Radio buttons
+                    const radioGroup = form.querySelectorAll(`input[name="${field.name}"]`);
+                    const checked = Array.from(radioGroup).some(radio => radio.checked);
+                    if (!checked) {
+                        isComplete = false;
+                    }
+                } else if (!field.value.trim()) {
+                    isComplete = false;
+                }
+            });
+
+            if (isComplete) {
+                // ข้อมูลครบถ้วน: แจ้งเตือนสำเร็จและกลับไปหน้า 1
+                alert(translations[lang]['save_success']);
+               window.location.href = 'KYC.html'
+                console.log('Form Submitted and Saved!');
+            } else {
+                // ข้อมูลไม่ครบ: แจ้งเตือน
+                alert(translations[lang]['data_incomplete']);
+            }
+        });
+
+        // ฟังก์ชันจำลองการนำทาง
+        function goToPage(pageNumber) {
+            if (pageNumber === 4) {
+                alert('Going back to Page 4 (Registration Confirmation Prompt)...');
+                window.location.href = 'KYC.html'
+            }
+        }
+
+        // กำหนดภาษาเริ่มต้น
+        switchLanguage('lo');
+    </script>
+</body>
+
+</html>

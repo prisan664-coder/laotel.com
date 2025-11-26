@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="lo">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ยืนยันการลงทะเบียน - ONEGRAB</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon"
+        href="https://yt3.googleusercontent.com/VXBqu2w1O93ZCteJjg7wHZmw0G1Z6p7N819cjJ9zL1Z_echaOzsqGoX8Zgs38vmcblErx_MaW3o=s900-c-k-c0x00ffffff-no-rj"
+        type="image/x-icon">
+    <link rel="icon"
+        href="https://yt3.googleusercontent.com/VXBqu2w1O93ZCteJjg7wHZmw0G1Z6p7N819cjJ9zL1Z_echaOzsqGoX8Zgs38vmcblErx_MaW3o=s900-c-k-c0x00ffffff-no-rj"
+        type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* (CSS Styles from previous pages) */
+        body {
+            font-family: 'Noto Sans Lao', sans-serif;
+            text-align: center;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .full-screen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-title {
+            color: #cc0000;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .status-icon {
+            font-size: 80px;
+            color: #cc0000;
+            margin-bottom: 10px;
+            /* จำลองไอคอนบุคคลแดงมีกากบาท */
+        }
+
+        .map-placeholder {
+            height: 150px;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .btn-group {
+            margin-top: 20px;
+        }
+
+        .reg-btn,
+        .back-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .reg-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            /* Animation for flashing effect */
+            animation: flash 1.5s infinite alternate;
+        }
+
+        .back-btn {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+
+        /* Keyframe Animation for Flashing Button */
+        @keyframes flash {
+            0% {
+                background-color: #ff3333;
+                box-shadow: 0 0 10px #ff3333;
+            }
+
+            100% {
+                background-color: #cc0000;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="full-screen-overlay">
+        <div class="modal-content">
+            <p class="status-title" data-lang-key="not_registered_title">ເບີຂອງທ່ານຍັງບໍ່ໄດ້ຂື້ນທະບຽນ</p>
+
+            <div class="status-icon">
+                &#128100;<span
+                    style="position: relative; left: -15px; top: -15px; color: white; background: red; border-radius: 50%; padding: 0 5px;">❌</span>
+            </div>
+
+            <div class="map-placeholder">
+
+            </div>
+
+            <div class="btn-group">
+                <button class="reg-btn" onclick="goToPage(5)" data-lang-key="register_plus">+ ຂຶ້ນທະບຽນ</button>
+                <button class="back-btn" onclick="goToPage(3)" data-lang-key="go_back">ຍ້ອນກັບ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // *** Translations (รวมกับของหน้าก่อนหน้า) ***
+        const translations = {
+            lo: {
+                not_registered_title: 'ເບີຂອງທ່ານຍັງບໍ່ໄດ້ຂື້ນທະບຽນ',
+                register_plus: '+ ຂຶ້ນທະບຽນ',
+                go_back: 'ຍ້ອນກັບ',
+                // ... (อื่นๆ)
+            },
+            en: {
+                not_registered_title: 'Your number is not yet registered',
+                register_plus: '+ Register',
+                go_back: 'Go Back',
+                // ... (อื่นๆ)
+            }
+        };
+
+        // ฟังก์ชันสลับภาษา (ย่อเพื่อความกระชับ)
+        function switchLanguage(lang) {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            document.documentElement.lang = lang;
+        }
+        // *ในโค้ดจริงต้องเพิ่มปุ่มสลับภาษาไว้ในหน้าจอหลัก*
+
+        // ฟังก์ชันจำลองการนำทาง
+        function goToPage(pageNumber) {
+            if (pageNumber === 3) {
+                alert('Going back to Page 3 (SIM Check/Register)...');
+                window.location.href = 'KYC.html'
+            } else if (pageNumber === 5) {
+                alert('Redirecting to Page 5 (Registration Form)...');
+                window.location.href = 'Registration-Form.html'
+            }
+        }
+
+        // กำหนดภาษาเริ่มต้น
+        switchLanguage('lo');
+    </script>
+</body>
+
+</html>

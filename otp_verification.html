@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="lo">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ยืนยัน OTP - ONEGRAB SIM Register</title>
+    <link rel="shortcut icon"
+        href="https://yt3.googleusercontent.com/VXBqu2w1O93ZCteJjg7wHZmw0G1Z6p7N819cjJ9zL1Z_echaOzsqGoX8Zgs38vmcblErx_MaW3o=s900-c-k-c0x00ffffff-no-rj"
+        type="image/x-icon">
+    <link rel="icon"
+        href="https://yt3.googleusercontent.com/VXBqu2w1O93ZCteJjg7wHZmw0G1Z6p7N819cjJ9zL1Z_echaOzsqGoX8Zgs38vmcblErx_MaW3o=s900-c-k-c0x00ffffff-no-rj"
+        type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* (CSS Styles from Page 1 continued, plus new styles for OTP) */
+        body {
+            font-family: 'Noto Sans Lao', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+
+        .logo {
+            margin-top: 30px;
+        }
+
+        .title {
+            color: #cc0000;
+            margin-top: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .input-otp {
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            line-height: 1.5;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .btn-submit {
+            background-color: #8B4513;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            width: 300px;
+            margin: 10px auto;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        /* Style for the new resend button */
+        .btn-resend {
+            background: none;
+            border: none;
+            color: #cc0000;
+            padding: 5px;
+            margin-top: 5px;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        .links-group {
+            display: flex;
+            justify-content: space-around;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .lang-switch {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .lang-btn {
+            padding: 8px 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+
+        .lang-btn.active {
+            background-color: #cc0000;
+            color: white;
+            border: 1px solid #cc0000;
+        }
+
+        .footer {
+            margin-top: 50px;
+            font-size: 0.8em;
+            color: #777;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            cursor: pointer;
+        }
+
+        /* OTP Notification Styling */
+        .otp-notification {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 400px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 0 0 10px 10px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s, top 0.5s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1.1em;
+        }
+
+        .otp-notification.show {
+            top: 0;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="back-btn" onclick="goToPage(1)" title="Go Back">
+        &#10094; </button>
+
+    <div id="otpNotification" class="otp-notification">
+        <span data-lang-key="otp_received_prefix">ລະຫັດ OTP ທີ່ໄດ້ຮັບ:</span> <span id="actualOTP"></span>
+    </div>
+
+    <div class="logo">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPqFhrJIFtp7Dxg3xXbUfltVzt8Z-RcbTUMAejuZQ1mvRaPhFc2wECpk_ma68zv04NzEQ&usqp=CAU"
+            alt="SIM Card" style="width: 90px;">
+        <h2 style="color: #cc0000;">ONEGRAB</h2>
+        <p
+            style="color: #cc0000; font-size: 0.9em; border-top: 1px solid #cc0000; padding-top: 5px; max-width: 150px; margin: 0 auto;">
+            SIM Register</p>
+    </div>
+
+    <p class="title" data-lang-key="welcome_title">** ຍິນດີຕ້ອນຮັບ **</p>
+    <p data-lang-key="enter_otp_prompt">ກະລຸນາປ້ອນ OTP ທີ່ໄດ້ຮັບຈາກ SMS</p>
+
+    <input type="number" id="otpInput" class="input-otp" placeholder="ກະລຸນາປ້ອນ OTP ທີ່ໄດ້ຮັບຈາກ SMS ...">
+
+    <button class="btn-submit" onclick="verifyOTP()" data-lang-key="login_button">ເຂົ້າສູ່ລະບົບ</button>
+
+    <button class="btn-resend" onclick="requestNewOTP()" data-lang-key="resend_otp">ຂໍລະຫັດ OTP ອີກຄັ້ງ</button>
+
+    <div class="links-group">
+        <a href="#" onclick="addToHomeScreen()" data-lang-key="add_to_screen">ເພີ່ມໄປຫນ້າຈໍ</a>
+        <a href="https://www.youtube.com/watch?v=-mCDzwYQb8Y&list=PLjlrysjG6Ojqsk76b-an7N9pyXJ32U6mt" target="_blank"
+            data-lang-key="manual">ຄູ່ມື</a>
+    </div>
+
+    <div class="lang-switch">
+        <button class="lang-btn active" data-lang="lo">ລາວ</button>
+        <button class="lang-btn" data-lang="en">English</button>
+    </div>
+
+    <p class="footer">© 2025 - Lao Telecom</p>
+
+    <script>
+        // *** Translations (รวมกับของหน้า 1) ***
+        const translations = {
+            lo: {
+                welcome_title: '** ຍິນດີຕ້ອນຮັບ **',
+                enter_otp_prompt: 'ກະລຸນາປ້ອນ OTP ທີ່ໄດ້ຮັບຈາກ SMS',
+                login_button: 'ເຂົ້າສູ່ລະບົບ',
+                otp_received_prefix: 'ລະຫັດ OTP ທີ່ໄດ້ຮັບ:',
+                otp_error: 'ລະຫັດບໍ່ຖືກຕ້ອງ',
+                otp_success: 'ທ່ານໄດ້ປ້ອນລະຫັດ OTP ສຳເລັດແລ້ວ',
+                add_to_screen: 'ເພີ່ມໄປຫນ້າຈໍ',
+                manual: 'ຄູ່ມື',
+                resend_otp: 'ຂໍລະຫັດ OTP ອີກຄັ້ງ', // New translation
+                // ... (เพิ่มข้อความสำหรับหน้าอื่นๆ)
+            },
+            en: {
+                welcome_title: '** Welcome **',
+                enter_otp_prompt: 'Please enter the OTP received via SMS',
+                login_button: 'Login',
+                otp_received_prefix: 'OTP Received:',
+                otp_error: 'Incorrect code',
+                otp_success: 'You have successfully entered the OTP code',
+                add_to_screen: 'Add to Screen',
+                manual: 'Manual',
+                resend_otp: 'Request OTP again', // New translation
+                // ... (เพิ่มข้อความสำหรับหน้าอื่นๆ)
+            }
+        };
+
+        let MOCK_OTP; // Declared as 'let' so it can be updated
+
+        // ฟังก์ชันใหม่: สร้างรหัส OTP แบบสุ่ม 6 หลัก
+        function generateRandomOTP() {
+            // สร้างตัวเลขสุ่มระหว่าง 100000 ถึง 999999
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // ฟังก์ชันสลับภาษา
+        function switchLanguage(lang) {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            document.documentElement.lang = lang;
+        }
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchLanguage(btn.getAttribute('data-lang')));
+        });
+
+        // ฟังก์ชันแสดง Notification (ใช้ได้ทั้งตอนโหลดหน้าและตอนกดขอใหม่)
+        function showOTPNotification() {
+            const notification = document.getElementById('otpNotification');
+
+            // ใช้รหัส OTP ที่สร้างแบบสุ่ม
+            document.getElementById('actualOTP').textContent = MOCK_OTP;
+
+            // ตรวจสอบให้แน่ใจว่า Notification ถูกซ่อนก่อนแสดงใหม่ (สำหรับกรณี Resend)
+            notification.classList.remove('show');
+
+            // แสดง notification จากด้านบน
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 500);
+
+            // ซ่อน notification อัตโนมัติ
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // ฟังก์ชันสำหรับปุ่ม "ຂໍລະຫັດ OTP ອີກຄັ້ງ"
+        function requestNewOTP() {
+            // 1. สร้างรหัสใหม่
+            MOCK_OTP = generateRandomOTP();
+            // 2. ล้างช่องป้อน OTP เดิม
+            document.getElementById('otpInput').value = '';
+            // 3. แสดง Notification ใหม่
+            showOTPNotification();
+
+            console.log('New OTP requested: ' + MOCK_OTP);
+        }
+
+        // ฟังก์ชันตรวจสอบ OTP
+        function verifyOTP() {
+            const input = document.getElementById('otpInput').value.trim();
+            const lang = document.documentElement.lang;
+
+            if (input === MOCK_OTP) {
+                // OTP ถูกต้อง: แจ้งเตือนสำเร็จและไปหน้า 3
+                alert(translations[lang]['otp_success']);
+                // *** ในระบบจริง: นำไปหน้า 3 ***
+                window.location.href = 'KYC.html';
+            } else {
+                // OTP ไม่ถูกต้อง: แจ้งเตือนผิด
+                alert(translations[lang]['otp_error']);
+            }
+        }
+
+        // ฟังก์ชันจำลองการนำทาง
+        function goToPage(pageNumber) {
+            if (pageNumber === 1) {
+                alert('Going back to Page 1 (SIM Register)...');
+                // *** ในระบบจริง: window.location.href = 'index.html'; ***
+                window.location.href = 'index.html' // Keeping the user's intended link
+            }
+        }
+
+        // เมื่อโหลดหน้า ให้สร้าง OTP และแสดง Notification
+        window.onload = function () {
+            MOCK_OTP = generateRandomOTP();
+            showOTPNotification();
+            console.log('Initial OTP: ' + MOCK_OTP);
+        };
+
+        // PWA function (from Page 1)
+        function addToHomeScreen() {
+            alert("ฟังก์ชัน PWA: จะแสดง Prompt ให้ผู้ใช้ 'เพิ่มไปยังหน้าจอหลัก' ในเบราว์เซอร์จริง");
+        }
+    </script>
+</body>
+
+</html>

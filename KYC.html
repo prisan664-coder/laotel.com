@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="lo">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจสอบ/ลงทะเบียนซิม - ONEGRAB</title>
+    <style>
+        /* (CSS Styles from Page 1 & 2 continued, plus new styles for Keypad/Notification) */
+        body {
+            font-family: 'Noto Sans Lao', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+
+        .network-prefix {
+            font-size: 3em;
+            color: #cc0000;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .network-selector {
+            display: flex;
+            max-width: 300px;
+            margin: 0 auto 20px;
+        }
+
+        .network-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .network-btn.active {
+            background-color: #cc0000;
+            color: white;
+            border: 1px solid #cc0000;
+        }
+
+        .phone-input-field {
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            width: 300px;
+            text-align: center;
+            display: block;
+            margin: 0 auto 20px;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 300px;
+            margin: 0 auto;
+            gap: 10px;
+        }
+
+        .keypad-btn {
+            background-color: white;
+            border: 1px solid #eee;
+            padding: 15px 0;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .keypad-btn:active {
+            background-color: #f0f0f0;
+        }
+
+        .action-btn-group {
+            max-width: 300px;
+            margin: 30px auto 10px;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .btn-check {
+            background-color: #cc0000;
+            color: white;
+        }
+
+        .btn-logout {
+            background-color: white;
+            color: #cc0000;
+            border: 1px solid #cc0000;
+        }
+
+        .btn-register {
+            background-color: blue;
+            color: white;
+        }
+
+        /* Notification Styling (เหมือนข้อความเข้า) */
+        .status-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 80%;
+            max-width: 350px;
+            text-align: left;
+            opacity: 0;
+            transition: opacity 0.5s;
+            display: none;
+            border-left: 5px solid #cc0000;
+            /* Red emphasis */
+        }
+
+        .status-notification.show {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="statusNotification" class="status-notification">
+        <p id="notificationText"></p>
+    </div>
+
+    <div id="currentPrefix" class="network-prefix">020</div>
+    <p data-lang-key="select_network">ເລືອກເຄືອຂ່າຍ</p>
+
+    <div class="network-selector">
+        <button class="network-btn active" data-prefix="020" onclick="setPrefix('020')">020</button>
+        <button class="network-btn" data-prefix="030" onclick="setPrefix('030')">030</button>
+    </div>
+
+    <input type="text" id="phoneInput" class="phone-input-field" placeholder="ປ້ອນເບີ">
+
+    <div class="keypad">
+        <button class="keypad-btn" onclick="appendNumber('1')">1</button>
+        <button class="keypad-btn" onclick="appendNumber('2')">2</button>
+        <button class="keypad-btn" onclick="appendNumber('3')">3</button>
+
+        <button class="keypad-btn" onclick="appendNumber('4')">4</button>
+        <button class="keypad-btn" onclick="appendNumber('5')">5</button>
+        <button class="keypad-btn" onclick="appendNumber('6')">6</button>
+
+        <button class="keypad-btn" onclick="appendNumber('7')">7</button>
+        <button class="keypad-btn" onclick="appendNumber('8')">8</button>
+        <button class="keypad-btn" onclick="appendNumber('9')">9</button>
+
+        <button class="keypad-btn" onclick="clearInput('C')">C</button>
+        <button class="keypad-btn" onclick="appendNumber('0')">0</button>
+        <button class="keypad-btn" onclick="deleteNumber()">&#x2190;</button>
+    </div>
+
+    <div class="action-btn-group">
+        <button class="action-btn btn-check" onclick="checkSimStatus()" data-lang-key="check_info">ກວດສອບຂໍ້ມູນ
+            >>></button>
+        <button class="action-btn btn-logout" onclick="goToPage(1)" data-lang-key="logout">ອອກຈາກລະບົບ</button>
+        <button class="action-btn btn-register" onclick="goToPage(4)"
+            data-lang-key="register_agent">ຕົວແທນຂື້ນທະບຽນ</button>
+    </div>
+
+    <p class="footer">© 2025 - Lao Telecom</p>
+
+    <script>
+        let currentPrefix = '020';
+        const phoneInput = document.getElementById('phoneInput');
+        const notificationText = document.getElementById('notificationText');
+        const statusNotification = document.getElementById('statusNotification');
+
+        // *** Translations (รวมกับของหน้า 1 & 2) ***
+        const translations = {
+            lo: {
+                select_network: 'ເລືອກເຄືອຂ່າຍ',
+                check_info: 'ກວດສອບຂໍ້ມູນ >>>',
+                logout: 'ອອກຈາກລະບົບ',
+                register_agent: 'ຕົວແທນຂື້ນທະບຽນ',
+                // สถานะซิม
+                not_registered: 'ເບີໂທລະສັບຂອງທ່ານຍັງບໍ່ໄດ້ຂື້ນທະບຽນ',
+                registered: 'ເບີໂທລະສັບຂອງທ່ານໄດ້ຂື້ນທະບຽນສຳເລັດແລ້ວ',
+                // ข้อความเบอร์ไม่ถูกต้อง
+                invalid_number_alert: 'ກະລຸນາປ້ອນເບີໂທລະສັບທີ່ຖືກຕ້ອງ (8 ຕົວ, ຂຶ້ນຕົ້ນດ້ວຍ 5 ຫຼື 7)',
+            },
+            en: {
+                select_network: 'Select Network',
+                check_info: 'Check Information >>>',
+                logout: 'Logout',
+                register_agent: 'Register Agent',
+                // สถานะซิม
+                not_registered: 'Your phone number is not yet registered',
+                registered: 'Your phone number has been successfully registered',
+                // ข้อความเบอร์ไม่ถูกต้อง
+                invalid_number_alert: 'Please enter a valid phone number (8 digits, starting with 5 or 7)',
+            }
+        };
+
+        // ฟังก์ชันสลับภาษา
+        function switchLanguage(lang) {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            document.querySelectorAll('.network-btn').forEach(btn => btn.classList.remove('active'));
+            // ต้องตรวจสอบว่า .network-btn มีอยู่ก่อนที่จะพยายามใช้ .classList.add
+            const activeBtn = document.querySelector(`.network-btn[data-prefix="${currentPrefix}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            document.documentElement.lang = lang;
+        }
+
+        // ฟังก์ชันสลับ Prefix (020/030)
+        function setPrefix(prefix) {
+            currentPrefix = prefix;
+            document.getElementById('currentPrefix').textContent = prefix;
+            document.querySelectorAll('.network-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.querySelector(`.network-btn[data-prefix="${prefix}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+        }
+
+        // ฟังก์ชันจัดการ Keypad: ป้อนตัวเลข
+        function appendNumber(num) {
+            const currentVal = phoneInput.value;
+            // ข้อจำกัด: เบอร์ต่อท้าย 020/030 สูงสุด 8 ตัว และต้องเริ่มด้วย 5 หรือ 7
+            const isValidStart = (currentVal.length === 0 && (num === '5' || num === '7'));
+            const isValidAppend = currentVal.length > 0;
+
+            if (currentVal.length < 8 && (isValidStart || isValidAppend)) {
+                phoneInput.value += num;
+            }
+        }
+
+        // ฟังก์ชันจัดการ Keypad: ลบตัวเลข
+        function deleteNumber() {
+            phoneInput.value = phoneInput.value.slice(0, -1);
+        }
+
+        // ฟังก์ชันจัดการ Keypad: ล้างทั้งหมด (C)
+        function clearInput() {
+            phoneInput.value = '';
+        }
+
+        // ฟังก์ชันแสดง Notification สถานะซิม
+        function showStatusNotification(isRegistered) {
+            const lang = document.documentElement.lang;
+            if (isRegistered) {
+                notificationText.textContent = translations[lang]['registered'];
+                statusNotification.style.borderLeftColor = '#4CAF50'; // Green for success
+            } else {
+                notificationText.textContent = translations[lang]['not_registered'];
+                statusNotification.style.borderLeftColor = '#cc0000'; // Red for not registered
+            }
+
+            // แสดง Notification
+            statusNotification.style.display = 'block';
+            setTimeout(() => {
+                statusNotification.classList.add('show');
+            }, 50);
+
+            // ซ่อนอัตโนมัติ
+            setTimeout(() => {
+                statusNotification.classList.remove('show');
+                // ซ่อน element จริงๆ หลัง transition จบ
+                setTimeout(() => {
+                    statusNotification.style.display = 'none';
+                }, 500);
+            }, 5000);
+        }
+
+        // ฟังก์ชันตรวจสอบสถานะซิม
+        function checkSimStatus() {
+            const lang = document.documentElement.lang;
+
+            // ตรวจสอบความถูกต้องของเบอร์ก่อน
+            if (phoneInput.value.length !== 8 || !(phoneInput.value.startsWith('5') || phoneInput.value.startsWith('7'))) {
+                alert(translations[lang]['invalid_number_alert']);
+                return;
+            }
+
+            const fullNumber = currentPrefix + phoneInput.value.trim();
+
+            // --- จำลอง Logic การตรวจสอบ SIM ---
+            // สมมติว่าเบอร์ลงท้ายด้วย 000 ลงทะเบียนแล้ว
+            const isRegistered = fullNumber.endsWith('000');
+            showStatusNotification(isRegistered);
+            // ------------------------------------
+        }
+
+        // ฟังก์ชันจำลองการนำทาง
+        function goToPage(pageNumber) {
+            if (pageNumber === 1) {
+                alert('Logging out... Redirecting to Page 1 (SIM Register)...');
+                // *** ลิงก์กลับหน้าหลัก/ล็อกเอาท์ ***
+                window.location.href = 'index.html';
+            } else if (pageNumber === 4) {
+                alert('Redirecting to Page 4 (Registration Confirmation Prompt)...');
+                // *** ลิงก์ไปหน้า 4 (ยืนยันการลงทะเบียนซิม) ***
+                window.location.href = 'KYC-key4.html';
+            }
+        }
+
+        // กำหนดภาษาเริ่มต้น
+        document.addEventListener('DOMContentLoaded', () => {
+            // โค้ดสำหรับ Language Switcher ถ้ามี
+            // ในตัวอย่างนี้ ใช้ lo เป็นหลักอยู่แล้ว
+        });
+    </script>
+</body>
+
+</html>

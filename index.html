@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="lo">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONEGRAB</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon"
+        href="https://yt3.googleusercontent.com/VXBqu2w1O93ZCteJjg7wHZmw0G1Z6p7N819cjJ9zL1Z_echaOzsqGoX8Zgs38vmcblErx_MaW3o=s900-c-k-c0x00ffffff-no-rj"
+        type="image/x-icon">
+    <link rel="icon"
+        href="https://yt3.googleusercontent.com/VXBqu2w1O93ZCteJjg7wHZmw0G1Z6p7N819cjJ9zL1Z_echaOzsqGoX8Zgs38vmcblErx_MaW3o=s900-c-k-c0x00ffffff-no-rj"
+        type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* CSS พื้นฐานเพื่อจำลองรูปลักษณ์ (ใช้ Tailwind หรือ Bootstrap ในงานจริง) */
+
+        body {
+            font-family: 'Noto Sans Lao', sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+
+        .logo {
+            margin-top: 30px;
+        }
+
+        .title {
+            color: #cc0000;
+            margin-top: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .input-group {
+            display: flex;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .input-prefix {
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            border-radius: 5px 0 0 5px;
+            line-height: 1.5;
+        }
+
+        .input-main {
+            flex-grow: 1;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            border-radius: 0 5px 5px 0;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+
+        .btn-otp {
+            background-color: #8b0000;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            width: 300px;
+            margin: 10px auto;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .links-group {
+            display: flex;
+            justify-content: space-around;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .lang-switch {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .lang-btn {
+            padding: 8px 20px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+
+        .lang-btn.active {
+            background-color: #cc0000;
+            color: white;
+            border: 1px solid #cc0000;
+        }
+
+        .footer {
+            margin-top: 50px;
+            font-size: 0.8em;
+            color: #777;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: -10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="logo">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPqFhrJIFtp7Dxg3xXbUfltVzt8Z-RcbTUMAejuZQ1mvRaPhFc2wECpk_ma68zv04NzEQ&usqp=CAU"
+            alt="SIM Card" style="width: 110px;">
+        <h2 style="color: #cc0000;">ONEGRAB</h2>
+        <p
+            style="color: #cc0000; font-size: 0.9em; border-top: 1px solid #cc0000; padding-top: 5px; max-width: 150px; margin: 0 auto;">
+            SIM Register</p>
+    </div>
+
+    <p class="title" data-lang-key="welcome_title">** ຍິນດີຕ້ອນຮັບ **</p>
+    <p data-lang-key="enter_number">ໃສ່ເບີໂທ</p>
+
+    <div class="input-group">
+        <div class="input-prefix">020</div>
+        <input type="number" id="phoneInput" class="input-main" placeholder="5xx...or 7xx...">
+    </div>
+    <p id="errorMessage" class="error-message" data-lang-key="phone_error">ເບີທີ່ປ້ອນຕ້ອງຂື້ນຕົ້ນດ້ວຍ 5 ຫຼື 7 ແລະ ມີ 8
+        ຕົວເລກ</p>
+
+    <button class="btn-otp" onclick="requestOTP()" data-lang-key="request_otp">ຂໍສົ່ງລະຫັດ OTP</button>
+
+    <div class="links-group">
+        <a href="#" onclick="addToHomeScreen()" data-lang-key="add_to_screen">ເພີ່ມໄປຫນ້າຈໍ</a>
+        <a href="https://www.youtube.com/watch?v=-mCDzwYQb8Y&list=PLjlrysjG6Ojqsk76b-an7N9pyXJ32U6mt" target="_blank"
+            data-lang-key="manual">ວິທີໃຊ້ງານ</a>
+    </div>
+
+    <div class="lang-switch">
+        <button class="lang-btn active" data-lang="lo">ລາວ</button>
+        <button class="lang-btn" data-lang="en">English</button>
+    </div>
+
+    <p class="footer">© 2025 - Lao Telecom</p>
+
+    <script>
+        // Dictionary สำหรับการสลับภาษา
+        const translations = {
+            lo: {
+                welcome_title: '** ຍິນດີຕ້ອນຮັບ **',
+                enter_number: 'ໃສ່ເບີໂທ',
+                request_otp: 'ຂໍສົ່ງລະຫັດ OTP',
+                add_to_screen: 'ເພີ່ມໄປຫນ້າຈໍ',
+                manual: 'ວິທີໃຊ້ງານ',
+                phone_error: 'ເບີທີ່ປ້ອນຕ້ອງຂື້ນຕົ້ນດ້ວຍ 5 ຫຼື 7 ແລະ ມີ 8 ຕົວເລກ',
+                // เพิ่มข้อความภาษาลาวสำหรับหน้าอื่นๆ
+            },
+            en: {
+                welcome_title: '** Welcome **',
+                enter_number: 'Enter Phone Number',
+                request_otp: 'Request OTP',
+                add_to_screen: 'Add to Screen',
+                manual: 'Manual',
+                phone_error: 'The number must start with 5 or 7 and have 8 digits.',
+                // เพิ่มข้อความภาษาอังกฤษสำหรับหน้าอื่นๆ
+            }
+        };
+
+        // ฟังก์ชันสลับภาษา
+        function switchLanguage(lang) {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                element.textContent = translations[lang][key];
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            document.documentElement.lang = lang; // Set HTML lang attribute
+        }
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchLanguage(btn.getAttribute('data-lang')));
+        });
+
+        // ฟังก์ชันตรวจสอบเบอร์โทรศัพท์และไปยังหน้า 2
+        function requestOTP() {
+            const phoneInput = document.getElementById('phoneInput').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+
+            // ตรวจสอบความยาว 8 ตัวอักษรและขึ้นต้นด้วย 5 หรือ 7
+            if (phoneInput.length === 8 && (phoneInput.startsWith('5') || phoneInput.startsWith('7'))) {
+                errorMessage.style.display = 'none';
+                alert('OTP requested for 020' + phoneInput + '. Redirecting to OTP screen (Page 2)...');
+                // *** ในระบบจริง: ใช้ window.location.href เพื่อนำไปหน้า 2 ***
+                window.location.href = 'otp_verification.html'; 
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        }
+
+        // ฟังก์ชันจำลอง PWA (Add to Home Screen)
+        function addToHomeScreen() {
+            alert("ฟังก์ชัน PWA: จะแสดง Prompt ให้ผู้ใช้ 'เพิ่มไปยังหน้าจอหลัก' ในเบราว์เซอร์จริง");
+        }
+    </script>
+</body>
+
+</html>
